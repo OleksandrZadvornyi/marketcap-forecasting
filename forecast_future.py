@@ -467,8 +467,8 @@ def plot_forecast(
     plt.tight_layout()
     
     # Save the plot
-    os.makedirs('forecasts', exist_ok=True)
-    plt.savefig(f'forecasts/{item_name}_forecast.png', dpi=300, bbox_inches='tight')
+    os.makedirs('forecasts/transformers_forecasts', exist_ok=True)
+    plt.savefig(f'forecasts/transformers_forecasts/{item_name}_forecast.png', dpi=300, bbox_inches='tight')
     
     plt.show()
 
