@@ -38,6 +38,8 @@ from gluonts.transform import (
 from gluonts.transform.sampler import InstanceSampler
 from torch.optim import AdamW
 from transformers import PretrainedConfig, TimeSeriesTransformerConfig, TimeSeriesTransformerForPrediction
+import time
+from datetime import timedelta
 
 
 # ===== Helper Functions =====
@@ -265,7 +267,14 @@ def save_model(model, model_path, config_path, freq, prediction_length, lags_seq
 def train_model(model, optimizer, train_dataloader, config, device, num_epochs=40):
     """Train the model for the specified number of epochs."""
     model.train()
+    
+    # Start total training timer
+    total_start_time = time.time()
+    
     for epoch in range(num_epochs):
+        # Start epoch timer
+        epoch_start_time = time.time()
+        
         epoch_loss = 0
         num_batches = 0
 
@@ -284,8 +293,19 @@ def train_model(model, optimizer, train_dataloader, config, device, num_epochs=4
             if idx % 10 == 0:
                 print(f"Epoch {epoch}, Batch {idx}, Loss: {loss.item():.4f}")
 
+        # Calculate epoch timing
+        epoch_end_time = time.time()
+        epoch_duration = epoch_end_time - epoch_start_time
+        
         avg_epoch_loss = epoch_loss / num_batches
-        print(f"Epoch {epoch} completed. Average loss: {avg_epoch_loss:.4f}")
+        print(f"Epoch {epoch} completed in {timedelta(seconds=epoch_duration)}. Average loss: {avg_epoch_loss:.4f}")
+    
+    # Calculate total training time
+    total_end_time = time.time()
+    total_duration = total_end_time - total_start_time
+    
+    print(f"Training completed in {timedelta(seconds=total_duration)}")
+    print(f"Average time per epoch: {timedelta(seconds=total_duration/num_epochs)}")
 
 
 def visualize_data(train_example, validation_example, test_example):
