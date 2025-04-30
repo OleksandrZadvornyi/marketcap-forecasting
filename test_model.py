@@ -1,75 +1,73 @@
+"""
+Market Capitalization Time Series Forecasting - Model Testing
+This script loads a trained Time Series Transformer model and evaluates its performance on test data.
+"""
+
 import os
-import torch
+from typing import Optional
 
-from transformers import TimeSeriesTransformerConfig, TimeSeriesTransformerForPrediction
-
-# Load model and configuration
-model_dir = "marketcap_model_900_12"
-model_path = os.path.join(model_dir, "time_series_model.pth")
-config_path = os.path.join(model_dir, "config")
-
-# Load configuration
-config = TimeSeriesTransformerConfig.from_pretrained(config_path)
-
-# Load metadata
-metadata = {}
-with open(os.path.join(config_path, "metadata.txt"), "r") as f:
-    for line in f:
-        key, value = line.strip().split("=")
-        metadata[key] = value
-
-freq = metadata["freq"]
-prediction_length = int(metadata["prediction_length"])
-
-# Initialize model
-model = TimeSeriesTransformerForPrediction(config)
-model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-
-prediction_length
-
-from datasets import load_from_disk
-
-# Load test dataset
-data_dir = "prepared_marketcap_dataset"
-dataset = load_from_disk(f"{data_dir}/dataset")
-test_dataset = dataset["test"]
-
-from gluonts.dataset.field_names import FieldName
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import torch
+from datasets import load_from_disk
+from evaluate import load
 from gluonts.dataset.common import ListDataset
-
-# Convert test dataset to GluonTS ListDataset format
-def convert_to_gluonts_dataset(hf_dataset, freq):
-    data = []
-    for item in hf_dataset:
-        data.append({
-            FieldName.START: pd.Period(item["start"], freq=freq),
-            FieldName.TARGET: item["target"],
-            FieldName.FEAT_STATIC_CAT: [item["feat_static_cat"][0]],
-            #FieldName.FEAT_STATIC_REAL: item["feat_static_real"],
-            FieldName.ITEM_ID: item["item_id"]
-        })
-    return ListDataset(data, freq=freq)
-
-gluonts_test_dataset = convert_to_gluonts_dataset(test_dataset, freq)
-
-from gluonts.transform import Transformation
-from gluonts.time_feature import time_features_from_frequency_str
-from transformers import PretrainedConfig
-
+from gluonts.dataset.field_names import FieldName
+from gluonts.dataset.loader import as_stacked_batches
+from gluonts.time_feature import (
+    get_seasonality,
+    time_features_from_frequency_str,
+)
 from gluonts.transform import (
     AddAgeFeature,
     AddObservedValuesIndicator,
     AddTimeFeatures,
     AsNumpyArray,
     Chain,
+    ExpectedNumInstanceSampler,
+    InstanceSplitter,
     RemoveFields,
-    TestSplitSampler,
-    VstackFeatures,
     RenameFields,
+    TestSplitSampler,
+    Transformation,
+    ValidationSplitSampler,
+    VstackFeatures,
 )
+from gluonts.transform.sampler import InstanceSampler
+from transformers import PretrainedConfig, TimeSeriesTransformerConfig, TimeSeriesTransformerForPrediction
+
+
+# ===== Helper Functions =====
+
+def load_metadata(config_path: str) -> dict:
+    """Load metadata from file."""
+    metadata = {}
+    with open(os.path.join(config_path, "metadata.txt"), "r") as f:
+        for line in f:
+            key, value = line.strip().split("=")
+            metadata[key] = value
+    return metadata
+
+
+def convert_to_gluonts_dataset(hf_dataset, freq: str) -> ListDataset:
+    """Convert HuggingFace dataset to GluonTS ListDataset format."""
+    data = []
+    for item in hf_dataset:
+        data.append({
+            FieldName.START: pd.Period(item["start"], freq=freq),
+            FieldName.TARGET: item["target"],
+            FieldName.FEAT_STATIC_CAT: [item["feat_static_cat"][0]],
+            # Uncomment if needed:
+            # FieldName.FEAT_STATIC_REAL: item["feat_static_real"],
+            FieldName.ITEM_ID: item["item_id"]
+        })
+    return ListDataset(data, freq=freq)
+
 
 def create_transformation(freq: str, config: PretrainedConfig) -> Transformation:
+    """Create a transformation pipeline for data preprocessing."""
     remove_field_names = []
     if config.num_static_real_features == 0:
         remove_field_names.append(FieldName.FEAT_STATIC_REAL)
@@ -78,11 +76,10 @@ def create_transformation(freq: str, config: PretrainedConfig) -> Transformation
     if config.num_static_categorical_features == 0:
         remove_field_names.append(FieldName.FEAT_STATIC_CAT)
 
-    # a bit like torchvision.transforms.Compose
     return Chain(
-        # step 1: remove static/dynamic fields if not specified
+        # Step 1: Remove static/dynamic fields if not specified
         [RemoveFields(field_names=remove_field_names)]
-        # step 2: convert the data to NumPy (potentially not needed)
+        # Step 2: Convert the data to NumPy
         + (
             [
                 AsNumpyArray(
@@ -107,21 +104,14 @@ def create_transformation(freq: str, config: PretrainedConfig) -> Transformation
         + [
             AsNumpyArray(
                 field=FieldName.TARGET,
-                # we expect an extra dim for the multivariate case:
                 expected_ndim=1 if config.input_size == 1 else 2,
             ),
-            # step 3: handle the NaN's by filling in the target with zero
-            # and return the mask (which is in the observed values)
-            # true for observed values, false for nan's
-            # the decoder uses this mask (no loss is incurred for unobserved values)
-            # see loss_weights inside the xxxForPrediction model
+            # Step 3: Handle NaN values - fill target with zeros and create mask
             AddObservedValuesIndicator(
                 target_field=FieldName.TARGET,
                 output_field=FieldName.OBSERVED_VALUES,
             ),
-            # step 4: add temporal features based on freq of the dataset
-            # month of year in the case when freq="M"
-            # these serve as positional encodings
+            # Step 4: Add temporal features based on frequency
             AddTimeFeatures(
                 start_field=FieldName.START,
                 target_field=FieldName.TARGET,
@@ -129,16 +119,14 @@ def create_transformation(freq: str, config: PretrainedConfig) -> Transformation
                 time_features=time_features_from_frequency_str(freq),
                 pred_length=config.prediction_length,
             ),
-            # step 5: add another temporal feature (just a single number)
-            # tells the model where in the life the value of the time series is
-            # sort of running counter
+            # Step 5: Add age feature (time series position indicator)
             AddAgeFeature(
                 target_field=FieldName.TARGET,
                 output_field=FieldName.FEAT_AGE,
                 pred_length=config.prediction_length,
                 log_scale=True,
             ),
-            # step 6: vertically stack all the temporal features into the key FEAT_TIME
+            # Step 6: Stack temporal features
             VstackFeatures(
                 output_field=FieldName.FEAT_TIME,
                 input_fields=[FieldName.FEAT_TIME, FieldName.FEAT_AGE]
@@ -148,7 +136,7 @@ def create_transformation(freq: str, config: PretrainedConfig) -> Transformation
                     else []
                 ),
             ),
-            # step 7: rename to match HuggingFace names
+            # Step 7: Rename fields to match HuggingFace names
             RenameFields(
                 mapping={
                     FieldName.FEAT_STATIC_CAT: "static_categorical_features",
@@ -161,13 +149,6 @@ def create_transformation(freq: str, config: PretrainedConfig) -> Transformation
         ]
     )
 
-from gluonts.transform.sampler import InstanceSampler
-from typing import Optional
-from gluonts.transform import (
-    ExpectedNumInstanceSampler,
-    ValidationSplitSampler,
-    InstanceSplitter
-)
 
 def create_instance_splitter(
     config: PretrainedConfig,
@@ -175,6 +156,7 @@ def create_instance_splitter(
     train_sampler: Optional[InstanceSampler] = None,
     validation_sampler: Optional[InstanceSampler] = None,
 ) -> Transformation:
+    """Create an instance splitter for the specified mode."""
     assert mode in ["train", "validation", "test"]
 
     instance_sampler = {
@@ -198,15 +180,15 @@ def create_instance_splitter(
         time_series_fields=["time_features", "observed_mask"],
     )
 
-from gluonts.dataset.loader import as_stacked_batches
 
 def create_backtest_dataloader(
     config: PretrainedConfig,
-    freq,
+    freq: str,
     data,
     batch_size: int,
     **kwargs,
 ):
+    """Create a dataloader for backtesting."""
     PREDICTION_INPUT_NAMES = [
         "past_time_features",
         "past_values",
@@ -222,11 +204,10 @@ def create_backtest_dataloader(
     transformation = create_transformation(freq, config)
     transformed_data = transformation.apply(data)
 
-    # We create a Validation Instance splitter which will sample the very last
-    # context window seen during training only for the encoder.
+    # Use validation instance splitter to sample the last context window
     instance_sampler = create_instance_splitter(config, "validation")
 
-    # we apply the transformations in train mode
+    # Apply transformations in train mode
     testing_instances = instance_sampler.apply(transformed_data, is_train=True)
 
     return as_stacked_batches(
@@ -236,153 +217,206 @@ def create_backtest_dataloader(
         field_names=PREDICTION_INPUT_NAMES,
     )
 
-test_dataloader = create_backtest_dataloader(
-    config=config,
-    freq=freq,
-    data=gluonts_test_dataset, #test_dataset,
-    batch_size=64,
-)
 
-# Set device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
+def generate_forecasts(model, test_dataloader, config, device):
+    """Generate forecasts using the model."""
+    model.eval()
+    forecasts = []
 
-# Generate forecasts
-model.eval()
+    with torch.no_grad():
+        for batch in test_dataloader:
+            outputs = model.generate(
+                static_categorical_features=batch["static_categorical_features"].to(device)
+                if config.num_static_categorical_features > 0
+                else None,
+                static_real_features=batch["static_real_features"].to(device)
+                if config.num_static_real_features > 0
+                else None,
+                past_time_features=batch["past_time_features"].to(device),
+                past_values=batch["past_values"].to(device),
+                future_time_features=batch["future_time_features"].to(device),
+                past_observed_mask=batch["past_observed_mask"].to(device),
+            )
+            forecasts.append(outputs.sequences.cpu().numpy())
 
-forecasts = []
+    return np.vstack(forecasts)
 
-for batch in test_dataloader:
-    outputs = model.generate(
-        static_categorical_features=batch["static_categorical_features"].to(device)
-        if config.num_static_categorical_features > 0
-        else None,
-        static_real_features=batch["static_real_features"].to(device)
-        if config.num_static_real_features > 0
-        else None,
-        past_time_features=batch["past_time_features"].to(device),
-        past_values=batch["past_values"].to(device),
-        future_time_features=batch["future_time_features"].to(device),
-        past_observed_mask=batch["past_observed_mask"].to(device),
-    )
-    forecasts.append(outputs.sequences.cpu().numpy())
 
-forecasts[0].shape
+def calculate_metrics(forecasts, test_dataset, prediction_length, freq):
+    """Calculate MASE and sMAPE metrics for the forecasts."""
+    mase_metric = load("evaluate-metric/mase")
+    smape_metric = load("evaluate-metric/smape")
 
-import numpy as np
+    forecast_median = np.median(forecasts, axis=1)
+    
+    mase_metrics = []
+    smape_metrics = []
 
-forecasts = np.vstack(forecasts)
-print(f"Generated forecasts shape: {forecasts.shape}")
+    for item_id, ts in enumerate(test_dataset):
+        training_data = ts["target"][:-prediction_length]
+        ground_truth = ts["target"][-prediction_length:]
 
-from evaluate import load
-from gluonts.time_feature import get_seasonality
+        mase = mase_metric.compute(
+            predictions=forecast_median[item_id],
+            references=np.array(ground_truth),
+            training=np.array(training_data),
+            periodicity=get_seasonality(freq)
+        )
+        mase_metrics.append(mase["mase"])
 
-mase_metric = load("evaluate-metric/mase")
-smape_metric = load("evaluate-metric/smape")
+        smape = smape_metric.compute(
+            predictions=forecast_median[item_id],
+            references=np.array(ground_truth)
+        )
+        smape_metrics.append(smape["smape"])
 
-forecast_median = np.median(forecasts, 1)
+    return mase_metrics, smape_metrics
 
-mase_metrics = []
-smape_metrics = []
 
-for item_id, ts in enumerate(test_dataset):
-    training_data = ts["target"][:-prediction_length]
-    ground_truth = ts["target"][-prediction_length:]
+def plot_metrics_relationship(mase_metrics, smape_metrics):
+    """Plot the relationship between MASE and sMAPE metrics."""
+    plt.figure(figsize=(10, 6))
+    plt.scatter(mase_metrics, smape_metrics, alpha=0.3, color='#1f77b4', s=50)
+    plt.xlabel("MASE", fontsize=12)
+    plt.ylabel("sMAPE", fontsize=12)
+    plt.title("Relationship between MASE and sMAPE metrics", fontsize=14)
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
 
-    mase = mase_metric.compute(
-        predictions=forecast_median[item_id],
-        references=np.array(ground_truth),
-        training=np.array(training_data),
-        periodicity=get_seasonality(freq)
-    )
-    mase_metrics.append(mase["mase"])
 
-    smape = smape_metric.compute(
-        predictions=forecast_median[item_id],
-        references=np.array(ground_truth)
-    )
-    smape_metrics.append(smape["smape"])
+def plot_forecast(ts_index, test_dataset, forecasts, prediction_length, freq):
+    """Plot the forecast for a specific time series."""
+    fig, ax = plt.subplots(figsize=(12, 7))
 
-print(f"MASE: {np.mean(mase_metrics)}")
-
-print(f"sMAPE: {np.mean(smape_metrics)}")
-
-import matplotlib.pyplot as plt
-
-plt.scatter(mase_metrics, smape_metrics, alpha=0.3)
-plt.xlabel("MASE")
-plt.ylabel("sMAPE")
-plt.title("Relationship between MASE and sMAPE metrics")
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.show()
-
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import numpy as np
-
-def plot(ts_index):
-    fig, ax = plt.subplots(figsize=(10, 6))
-
+    # Create date range for x-axis
     index = pd.period_range(
         start=test_dataset[ts_index][FieldName.START],
         periods=len(test_dataset[ts_index][FieldName.TARGET]),
         freq=freq,
     ).to_timestamp()
 
-    # Major ticks every half year, minor ticks every month
+    # Configure x-axis ticks
     ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
     ax.xaxis.set_minor_locator(mdates.MonthLocator())
-
-    # Format the dates to show month and year
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
 
-    # Plot the actual data
+    # Plot historical data
     ax.plot(
         index[-2 * prediction_length:],
         test_dataset[ts_index]["target"][-2 * prediction_length:],
-        label="actual",
-        linewidth=2,
+        label="Historical Data",
+        linewidth=2.5,
         color='#1f77b4'
     )
 
-    # Plot the median forecast
+    # Plot median forecast
     ax.plot(
         index[-prediction_length:],
         np.median(forecasts[ts_index], axis=0),
-        label="median",
-        linewidth=2,
+        label="Median Forecast",
+        linewidth=2.5,
         color='#ff7f0e'
     )
 
-    # Add the confidence interval
+    # Add confidence interval
     ax.fill_between(
         index[-prediction_length:],
         forecasts[ts_index].mean(0) - forecasts[ts_index].std(axis=0),
         forecasts[ts_index].mean(0) + forecasts[ts_index].std(axis=0),
         alpha=0.3,
         interpolate=True,
-        label="+/- 1-std",
-        color='#1f77b4'
+        label="±1 Std Dev",
+        color='#ff7f0e'
     )
 
-    # Add title and labels
-    plt.title(f'Time Series Forecast ({test_dataset[ts_index]["item_id"]})', fontsize=14, pad=20)
-    plt.ylabel('Market Cap (Billion USD)', fontsize=12)
-    plt.xlabel('Date')
-
-    # Improve the grid and legend
+    # Customize plot appearance
+    title = f'Market Cap Forecast: {test_dataset[ts_index]["item_id"]}'
+    plt.title(title, fontsize=16, pad=20)
+    plt.ylabel('Market Cap (Billion USD)', fontsize=14)
+    plt.xlabel('Date', fontsize=14)
     ax.grid(True, linestyle='--', alpha=0.7)
-    plt.legend(loc='upper left')
-
-    # Rotate date labels for better readability
+    plt.legend(loc='upper left', fontsize=12)
     plt.gcf().autofmt_xdate()
-
     plt.tight_layout()
     plt.show()
 
-target_items = {"Apple", "Microsoft", "NVIDIA", "Tencent", "ICBC", "Alibaba"}
 
-for i, item in enumerate(test_dataset):
-    if item["item_id"] in target_items:
-        plot(i)
+def plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, target_items=None):
+    """Plot forecasts for selected companies."""
+    if target_items is None:
+        target_items = {"Apple", "Microsoft", "NVIDIA", "Tencent", "ICBC", "Alibaba"}
+    
+    for i, item in enumerate(test_dataset):
+        if item["item_id"] in target_items:
+            plot_forecast(i, test_dataset, forecasts, prediction_length, freq)
 
+
+# ===== Main Execution =====
+
+def main():
+    # Load model and configuration
+    model_dir = "marketcap_model_900_12"
+    model_path = os.path.join(model_dir, "time_series_model.pth")
+    config_path = os.path.join(model_dir, "config")
+    
+    # Load configuration and metadata
+    config = TimeSeriesTransformerConfig.from_pretrained(config_path)
+    metadata = load_metadata(config_path)
+    
+    freq = metadata["freq"]
+    prediction_length = int(metadata["prediction_length"])
+    
+    print(f"Model configuration loaded from {config_path}")
+    print(f"Frequency: {freq}")
+    print(f"Prediction length: {prediction_length}")
+    
+    # Initialize and load model
+    model = TimeSeriesTransformerForPrediction(config)
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+    
+    # Set device
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    print(f"Using device: {device}")
+    
+    # Load test dataset
+    data_dir = "prepared_marketcap_dataset"
+    dataset = load_from_disk(f"{data_dir}/dataset")
+    test_dataset = dataset["test"]
+    
+    print(f"Test dataset loaded: {len(test_dataset)} time series")
+    
+    # Convert to GluonTS format
+    gluonts_test_dataset = convert_to_gluonts_dataset(test_dataset, freq)
+    
+    # Create dataloader
+    test_dataloader = create_backtest_dataloader(
+        config=config,
+        freq=freq,
+        data=gluonts_test_dataset,
+        batch_size=64,
+    )
+    
+    # Generate forecasts
+    print("Generating forecasts...")
+    forecasts = generate_forecasts(model, test_dataloader, config, device)
+    print(f"Generated forecasts shape: {forecasts.shape}")
+    
+    # Calculate metrics
+    print("Calculating evaluation metrics...")
+    mase_metrics, smape_metrics = calculate_metrics(forecasts, test_dataset, prediction_length, freq)
+    print(f"MASE: {np.mean(mase_metrics):.4f}")
+    print(f"sMAPE: {np.mean(smape_metrics):.4f}")
+    
+    # Visualize results
+    plot_metrics_relationship(mase_metrics, smape_metrics)
+    
+    # Plot forecasts for selected companies
+    target_companies = {"Apple", "Microsoft", "NVIDIA", "Tencent", "ICBC", "Alibaba"}
+    print(f"Plotting forecasts for selected companies: {', '.join(target_companies)}")
+    plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, target_companies)
+
+
+if __name__ == "__main__":
+    main()
