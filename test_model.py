@@ -243,19 +243,20 @@ def generate_forecasts(model, test_dataloader, config, device):
 
 
 def calculate_metrics(forecasts, test_dataset, prediction_length, freq):
-    """Calculate MASE and sMAPE metrics for the forecasts."""
+    """Calculate MASE, sMAPE, and MAPE metrics for the forecasts."""
     mase_metric = load("evaluate-metric/mase")
     smape_metric = load("evaluate-metric/smape")
-
     forecast_median = np.median(forecasts, axis=1)
     
     mase_metrics = []
     smape_metrics = []
-
+    mape_metrics = []  # Added MAPE metrics list
+    
     for item_id, ts in enumerate(test_dataset):
         training_data = ts["target"][:-prediction_length]
         ground_truth = ts["target"][-prediction_length:]
-
+        
+        # Calculate MASE
         mase = mase_metric.compute(
             predictions=forecast_median[item_id],
             references=np.array(ground_truth),
@@ -263,23 +264,31 @@ def calculate_metrics(forecasts, test_dataset, prediction_length, freq):
             periodicity=get_seasonality(freq)
         )
         mase_metrics.append(mase["mase"])
-
+        
+        # Calculate sMAPE
         smape = smape_metric.compute(
             predictions=forecast_median[item_id],
             references=np.array(ground_truth)
         )
         smape_metrics.append(smape["smape"])
+        
+        # Calculate MAPE
+        # Avoid division by zero by adding a small epsilon
+        epsilon = 1e-10
+        mape = np.mean(np.abs((np.array(ground_truth) - forecast_median[item_id]) / 
+                              (np.array(ground_truth) + epsilon))) * 100
+        mape_metrics.append(mape)
+        
+    return mase_metrics, smape_metrics, mape_metrics
 
-    return mase_metrics, smape_metrics
 
-
-def plot_metrics_relationship(mase_metrics, smape_metrics):
+def plot_metrics_relationship(mase_metrics, smape_metrics, xlabel, ylabel):
     """Plot the relationship between MASE and sMAPE metrics."""
     plt.figure(figsize=(10, 6))
     plt.scatter(mase_metrics, smape_metrics, alpha=0.3, color='#1f77b4', s=50)
-    plt.xlabel("MASE", fontsize=12)
-    plt.ylabel("sMAPE", fontsize=12)
-    plt.title("Relationship between MASE and sMAPE metrics", fontsize=14)
+    plt.xlabel(xlabel, fontsize=12)
+    plt.ylabel(ylabel, fontsize=12)
+    plt.title(f"Relationship between {xlabel} and {ylabel} metrics", fontsize=14)
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.show()
@@ -405,12 +414,14 @@ def main():
     
     # Calculate metrics
     print("Calculating evaluation metrics...")
-    mase_metrics, smape_metrics = calculate_metrics(forecasts, test_dataset, prediction_length, freq)
+    mase_metrics, smape_metrics, mape_metrics = calculate_metrics(forecasts, test_dataset, prediction_length, freq)
     print(f"MASE: {np.mean(mase_metrics):.4f}")
     print(f"sMAPE: {np.mean(smape_metrics):.4f}")
+    print(f"MAPE: {np.mean(mape_metrics):.4f}%")
     
     # Visualize results
-    plot_metrics_relationship(mase_metrics, smape_metrics)
+    plot_metrics_relationship(mase_metrics, smape_metrics, "MASE", "sMAPE")
+    plot_metrics_relationship(mase_metrics, mape_metrics, "MASE", "MAPE")
     
     # Plot forecasts for selected companies
     target_companies = {"Apple", "Microsoft", "NVIDIA", "Tencent", "ICBC", "Alibaba"}
