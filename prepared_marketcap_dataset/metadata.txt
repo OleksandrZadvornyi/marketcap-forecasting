@@ -1,0 +1,2 @@
+freq=M
+prediction_length=12
