@@ -8,7 +8,12 @@ from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 import warnings
+import datetime
 warnings.filterwarnings("ignore")
+
+# Create output directory
+output_folder = os.path.join("forecasts", "arima_sarima_forecasts")
+os.makedirs(output_folder, exist_ok=True)
 
 # Parameters
 forecast_steps = 12
@@ -146,7 +151,12 @@ def forecast_with_arima(company, df):
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
+        
+        # Save the plot
+        plot_filename = os.path.join(output_folder, f"{company}_ARIMA.png")
+        plt.savefig(plot_filename, dpi=300, bbox_inches='tight')
         plt.show()
+        print(f"Saved ARIMA plot to {plot_filename}")
         
         return rmse, f"ARIMA({p},{d},{q})"
     
@@ -232,7 +242,12 @@ def forecast_with_sarima(company, df, seasonal_period=12):
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
+        
+        # Save the plot
+        plot_filename = os.path.join(output_folder, f"{company}_SARIMA.png")
+        plt.savefig(plot_filename, dpi=300, bbox_inches='tight')
         plt.show()
+        print(f"Saved SARIMA plot to {plot_filename}")
         
         return rmse, f"SARIMA({p},{d},{q})({P},{D},{Q},{seasonal_period})"
     
@@ -264,8 +279,128 @@ for company in selected_companies:
     else:
         print(f"Company '{company}' not found in dataset.")
 
-# Print summary results
+# Print and save summary results
 if results:
     print("\n=== Model Comparison Summary ===")
     results_df = pd.DataFrame(results)
     print(results_df)
+    
+    # Save results to CSV
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    results_csv = os.path.join(output_folder, f"forecast_results_{timestamp}.csv")
+    results_df.to_csv(results_csv, index=False)
+    print(f"\nResults saved to {results_csv}")
+    
+    # Save as formatted markdown table
+    results_md = os.path.join(output_folder, f"forecast_results_{timestamp}.md")
+    with open(results_md, 'w') as f:
+        f.write("# Time Series Forecasting Results\n\n")
+        f.write(f"Generated on: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write(results_df.to_markdown(index=False))
+        f.write("\n\n## Model Details\n\n")
+        f.write("- ARIMA: Autoregressive Integrated Moving Average\n")
+        f.write("- SARIMA: Seasonal ARIMA\n")
+        f.write("- RMSE: Root Mean Square Error (lower is better)\n")
+    print(f"Formatted results saved to {results_md}")
+    
+    # Save summary HTML report with embedded images
+    html_report = os.path.join(output_folder, f"forecast_report_{timestamp}.html")
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Time Series Forecasting Report</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 20px; }}
+            table {{ border-collapse: collapse; width: 100%; margin-bottom: 30px; }}
+            th, td {{ border: 1px solid #ddd; padding: 8px; text-align: left; }}
+            th {{ background-color: #f2f2f2; }}
+            .image-gallery {{ display: flex; flex-wrap: wrap; gap: 20px; }}
+            .image-container {{ margin-bottom: 30px; }}
+            h1, h2, h3 {{ color: #333; }}
+            tr:nth-child(even) {{ background-color: #f9f9f9; }}
+            .best {{ font-weight: bold; color: green; }}
+        </style>
+    </head>
+    <body>
+        <h1>Time Series Forecasting Report</h1>
+        <p>Generated on: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+        
+        <h2>Results Summary</h2>
+        <table>
+            <tr>
+                <th>Company</th>
+                <th>SARIMA RMSE</th>
+                <th>ARIMA RMSE</th>
+                <th>Best Model</th>
+                <th>Best RMSE</th>
+            </tr>
+    """
+    
+    # Add table rows
+    for _, row in results_df.iterrows():
+        sarima_class = "best" if row['Best_Model'] == 'SARIMA' else ""
+        arima_class = "best" if row['Best_Model'] == 'ARIMA' else ""
+        
+        html_content += f"""
+            <tr>
+                <td>{row['Company']}</td>
+                <td class="{sarima_class}">{row['SARIMA_RMSE']}</td>
+                <td class="{arima_class}">{row['ARIMA_RMSE']}</td>
+                <td>{row['Best_Model']}</td>
+                <td>{row['Best_RMSE']}</td>
+            </tr>
+        """
+    
+    html_content += """
+        </table>
+        
+        <h2>Forecast Visualizations</h2>
+    """
+    
+    # Add images for each company
+    for company in selected_companies:
+        if company in company_data:
+            html_content += f"""
+            <div class="image-container">
+                <h3>{company}</h3>
+                <div class="image-gallery">
+            """
+            
+            # Add ARIMA image if exists
+            arima_img = f"{company}_ARIMA.png"
+            arima_path = os.path.join(output_folder, arima_img)
+            if os.path.exists(arima_path):
+                html_content += f"""
+                    <div>
+                        <h4>ARIMA Model</h4>
+                        <img src="{arima_img}" alt="{company} ARIMA forecast" style="max-width: 600px;">
+                    </div>
+                """
+            
+            # Add SARIMA image if exists
+            sarima_img = f"{company}_SARIMA.png"
+            sarima_path = os.path.join(output_folder, sarima_img)
+            if os.path.exists(sarima_path):
+                html_content += f"""
+                    <div>
+                        <h4>SARIMA Model</h4>
+                        <img src="{sarima_img}" alt="{company} SARIMA forecast" style="max-width: 600px;">
+                    </div>
+                """
+            
+            html_content += """
+                </div>
+            </div>
+            """
+    
+    html_content += """
+    </body>
+    </html>
+    """
+    
+    with open(html_report, 'w') as f:
+        f.write(html_content)
+    
+    print(f"HTML report saved to {html_report}")
