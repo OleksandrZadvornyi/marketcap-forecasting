@@ -4,6 +4,7 @@ import os
 
 # Folder containing the CSV files
 data_folder = "market_cap_data"
+plots_folder = "market_cap_data/plots"
 
 # List of specific files to read
 target_files = {
@@ -37,7 +38,7 @@ for idx, filename in enumerate(csv_files):
     plt.grid(True)
     plt.tight_layout()
     plt.legend()
-    plt.savefig(os.path.join(data_folder, filename.replace(".csv", "_plot.png")))
+    plt.savefig(os.path.join(plots_folder, filename.replace(".csv", "_plot.png")))
     plt.close()
 
     # Add to combined plot
@@ -50,5 +51,5 @@ plt.ylabel("Market Cap (Billion USD)")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
-plt.savefig(os.path.join(data_folder, "combined_market_cap_plot.png"))
+plt.savefig(os.path.join(plots_folder, "combined_market_cap_plot.png"))
 plt.show()
