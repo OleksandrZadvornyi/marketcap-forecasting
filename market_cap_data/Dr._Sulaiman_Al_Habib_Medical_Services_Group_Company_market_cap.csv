@@ -1,63 +1,63 @@
-Date,Stock Price,Market Cap (Billion USD),Company
-2020-03-01 00:00:00+03:00,50.390708923339844,17.636748123168946,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-04-01 00:00:00+03:00,56.173248291015625,19.66063690185547,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-05-01 00:00:00+03:00,58.6514778137207,20.528017234802245,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-06-01 00:00:00+03:00,69.1151123046875,24.190289306640626,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-07-01 00:00:00+03:00,80.77200317382812,28.270201110839842,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-08-01 00:00:00+03:00,82.9267349243164,29.02435722351074,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-09-01 00:00:00+03:00,89.42945098876953,31.300307846069337,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-10-01 00:00:00+03:00,87.57406616210938,30.65092315673828,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-11-01 00:00:00+03:00,107.61219787597656,37.664269256591794,Dr. Sulaiman Al Habib Medical Services Group Company
-2020-12-01 00:00:00+03:00,101.76518249511719,35.61781387329101,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-01-01 00:00:00+03:00,106.43329620361328,37.25165367126465,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-02-01 00:00:00+03:00,109.98109436035156,38.49338302612305,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-03-01 00:00:00+03:00,115.76956176757812,40.51934661865234,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-04-01 00:00:00+03:00,141.16421508789062,49.407475280761716,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-05-01 00:00:00+03:00,154.55905151367188,54.09566802978516,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-06-01 00:00:00+03:00,153.99359130859375,53.89775695800781,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-07-01 00:00:00+03:00,161.53305053710938,56.53656768798828,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-08-01 00:00:00+03:00,173.03076171875,60.5607666015625,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-09-01 00:00:00+03:00,164.5897674560547,57.60641860961914,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-10-01 00:00:00+03:00,162.319580078125,56.81185302734375,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-11-01 00:00:00+03:00,155.97830200195312,54.59240570068359,Dr. Sulaiman Al Habib Medical Services Group Company
-2021-12-01 00:00:00+03:00,153.31851196289062,53.66147918701172,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-01-01 00:00:00+03:00,156.73826599121094,54.85839309692383,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-02-01 00:00:00+03:00,162.62777709960938,56.91972198486328,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-03-01 00:00:00+03:00,180.86643981933594,63.303253936767575,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-04-01 00:00:00+03:00,189.9857635498047,66.49501724243164,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-05-01 00:00:00+03:00,203.8059539794922,71.33208389282227,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-06-01 00:00:00+03:00,185.5107421875,64.928759765625,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-07-01 00:00:00+03:00,200.6349334716797,70.22222671508788,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-08-01 00:00:00+03:00,191.44552612304688,67.00593414306641,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-09-01 00:00:00+03:00,199.8999786376953,69.96499252319336,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-10-01 00:00:00+03:00,223.54202270507812,78.23970794677734,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-11-01 00:00:00+03:00,216.27291870117188,75.69552154541016,Dr. Sulaiman Al Habib Medical Services Group Company
-2022-12-01 00:00:00+03:00,212.80023193359375,74.4800811767578,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-01-01 00:00:00+03:00,225.72640991210938,79.00424346923828,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-02-01 00:00:00+03:00,223.60421752929688,78.2614761352539,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-03-01 00:00:00+03:00,282.2185363769531,98.7764877319336,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-04-01 00:00:00+03:00,277.9571838378906,97.28501434326172,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-05-01 00:00:00+03:00,258.5873107910156,90.50555877685547,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-06-01 00:00:00+03:00,278.15570068359375,97.35449523925782,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-07-01 00:00:00+03:00,280.8769836425781,98.30694427490235,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-08-01 00:00:00+03:00,236.169921875,82.65947265625,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-09-01 00:00:00+03:00,229.83999633789062,80.44399871826172,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-10-01 00:00:00+03:00,245.83905029296875,86.04366760253906,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-11-01 00:00:00+03:00,275.1055908203125,96.28695678710938,Dr. Sulaiman Al Habib Medical Services Group Company
-2023-12-01 00:00:00+03:00,278.3267822265625,97.41437377929688,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-01-01 00:00:00+03:00,284.2068786621094,99.47240753173828,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-02-01 00:00:00+03:00,322.81982421875,112.9869384765625,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-03-01 00:00:00+03:00,300.9153747558594,105.32038116455078,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-04-01 00:00:00+03:00,305.4389343261719,106.90362701416015,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-05-01 00:00:00+03:00,271.8072509765625,95.13253784179688,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-06-01 00:00:00+03:00,284.9785461425781,99.74249114990235,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-07-01 00:00:00+03:00,284.3860778808594,99.53512725830078,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-08-01 00:00:00+03:00,302.16015625,105.7560546875,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-09-01 00:00:00+03:00,294.0897216796875,102.93140258789063,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-10-01 00:00:00+03:00,283.7777404785156,99.32220916748047,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-11-01 00:00:00+03:00,265.9300842285156,93.07552947998047,Dr. Sulaiman Al Habib Medical Services Group Company
-2024-12-01 00:00:00+03:00,279.2090759277344,97.72317657470703,Dr. Sulaiman Al Habib Medical Services Group Company
-2025-01-01 00:00:00+03:00,290.9589538574219,101.83563385009765,Dr. Sulaiman Al Habib Medical Services Group Company
-2025-02-01 00:00:00+03:00,279.4082336425781,97.79288177490234,Dr. Sulaiman Al Habib Medical Services Group Company
-2025-03-01 00:00:00+03:00,278.6000061035156,97.51000213623047,Dr. Sulaiman Al Habib Medical Services Group Company
-2025-04-01 00:00:00+03:00,287.0,100.45,Dr. Sulaiman Al Habib Medical Services Group Company
+Date,Stock Price,Market Cap (Billion USD),Company,Sector,Industry,PE_Ratio,PB_Ratio,Profit_Margin,ROE,ROA,Debt_to_Equity,Company_Age_Years,Market_Cap_Category
+2020-03-01 00:00:00+03:00,50.39070510864258,17.6367467880249,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-04-01 00:00:00+03:00,56.17324447631836,19.660635566711427,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-05-01 00:00:00+03:00,58.6514778137207,20.528017234802245,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-06-01 00:00:00+03:00,69.11511993408203,24.190291976928712,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-07-01 00:00:00+03:00,80.7719955444336,28.27019844055176,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-08-01 00:00:00+03:00,82.92672729492188,29.024354553222658,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-09-01 00:00:00+03:00,89.429443359375,31.30030517578125,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-10-01 00:00:00+03:00,87.57406616210938,30.65092315673828,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-11-01 00:00:00+03:00,107.61221313476562,37.66427459716797,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2020-12-01 00:00:00+03:00,101.76518249511719,35.61781387329101,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-01-01 00:00:00+03:00,106.43331909179688,37.251661682128905,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-02-01 00:00:00+03:00,109.98108673095703,38.49338035583496,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-03-01 00:00:00+03:00,115.76956176757812,40.51934661865234,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-04-01 00:00:00+03:00,141.1641387939453,49.40744857788086,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-05-01 00:00:00+03:00,154.55906677246094,54.095673370361325,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-06-01 00:00:00+03:00,153.99359130859375,53.89775695800781,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-07-01 00:00:00+03:00,161.5330810546875,56.53657836914063,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-08-01 00:00:00+03:00,173.03074645996094,60.560761260986325,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-09-01 00:00:00+03:00,164.5897674560547,57.60641860961914,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-10-01 00:00:00+03:00,162.31956481933594,56.81184768676758,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-11-01 00:00:00+03:00,155.97828674316406,54.59240036010742,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2021-12-01 00:00:00+03:00,153.31849670410156,53.66147384643555,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-01-01 00:00:00+03:00,156.7382354736328,54.85838241577149,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-02-01 00:00:00+03:00,162.6278076171875,56.919732666015626,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-03-01 00:00:00+03:00,180.86642456054688,63.30324859619141,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-04-01 00:00:00+03:00,189.9857635498047,66.49501724243164,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-05-01 00:00:00+03:00,203.80596923828125,71.33208923339843,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-06-01 00:00:00+03:00,185.51071166992188,64.92874908447266,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-07-01 00:00:00+03:00,200.63494873046875,70.22223205566407,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-08-01 00:00:00+03:00,191.44554138183594,67.00593948364258,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-09-01 00:00:00+03:00,199.8999786376953,69.96499252319336,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-10-01 00:00:00+03:00,223.54202270507812,78.23970794677734,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-11-01 00:00:00+03:00,216.2729034423828,75.69551620483398,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2022-12-01 00:00:00+03:00,212.8002166748047,74.48007583618164,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-01-01 00:00:00+03:00,225.72637939453125,79.00423278808594,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-02-01 00:00:00+03:00,223.6042022705078,78.26147079467773,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-03-01 00:00:00+03:00,282.21856689453125,98.77649841308593,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-04-01 00:00:00+03:00,277.9571533203125,97.28500366210938,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-05-01 00:00:00+03:00,258.58734130859375,90.50556945800781,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-06-01 00:00:00+03:00,278.1556396484375,97.35447387695312,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-07-01 00:00:00+03:00,280.876953125,98.30693359375,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-08-01 00:00:00+03:00,236.1698760986328,82.65945663452149,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-09-01 00:00:00+03:00,229.83999633789062,80.44399871826172,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-10-01 00:00:00+03:00,245.83905029296875,86.04366760253906,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-11-01 00:00:00+03:00,275.1056213378906,96.28696746826172,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2023-12-01 00:00:00+03:00,278.3267517089844,97.41436309814453,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-01-01 00:00:00+03:00,284.2069091796875,99.47241821289063,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-02-01 00:00:00+03:00,322.81982421875,112.9869384765625,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-03-01 00:00:00+03:00,300.9153747558594,105.32038116455078,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-04-01 00:00:00+03:00,305.43896484375,106.9036376953125,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-05-01 00:00:00+03:00,271.8072204589844,95.13252716064453,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-06-01 00:00:00+03:00,284.9785461425781,99.74249114990235,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-07-01 00:00:00+03:00,284.3860778808594,99.53512725830078,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-08-01 00:00:00+03:00,302.16015625,105.7560546875,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-09-01 00:00:00+03:00,294.0897216796875,102.93140258789063,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-10-01 00:00:00+03:00,283.7777404785156,99.32220916748047,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-11-01 00:00:00+03:00,265.9300842285156,93.07552947998047,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2024-12-01 00:00:00+03:00,279.2090759277344,97.72317657470703,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2025-01-01 00:00:00+03:00,290.9589538574219,101.83563385009765,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2025-02-01 00:00:00+03:00,279.4082336425781,97.79288177490234,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2025-03-01 00:00:00+03:00,278.6000061035156,97.51000213623047,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
+2025-04-01 00:00:00+03:00,286.3999938964844,100.23999786376953,Dr. Sulaiman Al Habib Medical Services Group Company,Healthcare,Medical Care Facilities,43.26284,13.970732,0.20671,0.32964,0.08101,107.262,,Large Cap
