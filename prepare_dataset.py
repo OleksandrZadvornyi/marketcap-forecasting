@@ -28,7 +28,7 @@ company_groups = {k: v for k, v in combined_df.groupby("Company")}
 
 # Time-based split
 prediction_length = 12
-def split_time_series(data, prediction_length=prediction_length):  # 6 months for example
+def split_time_series(data, prediction_length=prediction_length):
     train, val, test = {}, {}, {}
     for company, df in data.items():
         df = df.sort_values("Date")
@@ -49,7 +49,7 @@ def to_gluonts_format(data_dict):
     output = []
     id_map = {k: i for i, k in enumerate(data_dict.keys())}
     for k, df in data_dict.items():
-        print(k)
+        #print(k)
         start = df["Date"].iloc[0]
         target = df["MARKET_CAP"].values.astype("float32")
         ts = {
