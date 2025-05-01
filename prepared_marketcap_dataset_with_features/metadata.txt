@@ -1,5 +1,0 @@
-freq=M
-prediction_length=12
-cardinality_sector=12
-cardinality_industry=122
-cardinality_mcap=3

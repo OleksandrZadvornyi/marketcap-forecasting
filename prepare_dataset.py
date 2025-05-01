@@ -131,7 +131,7 @@ val_dataset = Dataset.from_list(val_ds, features=features)
 test_dataset = Dataset.from_list(test_ds, features=features)
 
 # Save datasets
-output_dir = "prepared_marketcap_dataset_with_features"
+output_dir = "prepared_marketcap_dataset"
 
 dataset_dict = DatasetDict({
     "train": train_dataset,

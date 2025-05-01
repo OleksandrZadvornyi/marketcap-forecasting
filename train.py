@@ -326,7 +326,7 @@ def visualize_data(train_example, validation_example, test_example):
 
 def main():
     # Load datasets
-    data_dir = "prepared_marketcap_dataset_with_features"
+    data_dir = "prepared_marketcap_dataset"
     dataset = load_from_disk(f"{data_dir}/dataset")
     
     print(f"Train dataset: {len(dataset['train'])} time series")
@@ -420,8 +420,8 @@ def main():
     
     # Save the model
     unwrapped_model = accelerator.unwrap_model(model)
-    model_path = "models/marketcap_model_1000_with_features"
-    config_path = "models/marketcap_model_1000_with_features/config"
+    model_path = "models/marketcap_model_1000"
+    config_path = "models/marketcap_model_1000/config"
     save_model(unwrapped_model, model_path, config_path, freq, prediction_length, lags_sequence)
     
     print(f"Model saved to {model_path}")

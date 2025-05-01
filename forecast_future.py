@@ -39,8 +39,8 @@ from gluonts.time_feature import time_features_from_frequency_str
 # ═════════════════════════════════════════════════════════════════
 
 # System paths and constants
-MODEL_DIR = "models/marketcap_model_1000_with_features"  # Update with your model directory
-DATA_DIR = "prepared_marketcap_dataset_with_features"
+MODEL_DIR = "models/marketcap_model_1000"  # Update with your model directory
+DATA_DIR = "prepared_marketcap_dataset"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Target companies for visualization
