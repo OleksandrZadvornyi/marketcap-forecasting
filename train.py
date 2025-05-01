@@ -414,8 +414,8 @@ def main():
     
     # Save the model
     unwrapped_model = accelerator.unwrap_model(model)
-    model_path = "marketcap_model"
-    config_path = "marketcap_model/config"
+    model_path = "models/marketcap_model_1000"
+    config_path = "models/marketcap_model_1000/config"
     save_model(unwrapped_model, model_path, config_path, freq, prediction_length, lags_sequence)
     
     print(f"Model saved to {model_path}")

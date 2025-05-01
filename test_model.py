@@ -365,7 +365,7 @@ def plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, ta
 
 def main():
     # Load model and configuration
-    model_dir = "marketcap_model_900_12"
+    model_dir = "models/marketcap_model_1000"
     model_path = os.path.join(model_dir, "time_series_model.pth")
     config_path = os.path.join(model_dir, "config")
     
