@@ -39,7 +39,7 @@ from gluonts.time_feature import time_features_from_frequency_str
 # ═════════════════════════════════════════════════════════════════
 
 # System paths and constants
-MODEL_DIR = "marketcap_model_900_12"  # Update with your model directory
+MODEL_DIR = "models/marketcap_model_1000"  # Update with your model directory
 DATA_DIR = "prepared_marketcap_dataset"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
