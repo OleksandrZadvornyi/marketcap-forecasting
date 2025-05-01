@@ -361,71 +361,66 @@ def plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, ta
 
 # ===== Main Execution =====
 
-def main():
-    # Load model and configuration
-    model_dir = "models/marketcap_model_1000"
-    model_path = os.path.join(model_dir, "time_series_model.pth")
-    config_path = os.path.join(model_dir, "config")
-    
-    # Load configuration and metadata
-    config = TimeSeriesTransformerConfig.from_pretrained(config_path)
-    metadata = load_metadata(config_path)
-    
-    freq = metadata["freq"]
-    prediction_length = int(metadata["prediction_length"])
-    
-    print(f"Model configuration loaded from {config_path}")
-    print(f"Frequency: {freq}")
-    print(f"Prediction length: {prediction_length}")
-    
-    # Initialize and load model
-    model = TimeSeriesTransformerForPrediction(config)
-    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-    
-    # Set device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model.to(device)
-    print(f"Using device: {device}")
-    
-    # Load test dataset
-    data_dir = "prepared_marketcap_dataset"
-    dataset = load_from_disk(f"{data_dir}/dataset")
-    test_dataset = dataset["test"]
-    
-    print(f"Test dataset loaded: {len(test_dataset)} time series")
-    
-    # Convert to GluonTS format
-    gluonts_test_dataset = convert_to_gluonts_dataset(test_dataset, freq)
-    
-    # Create dataloader
-    test_dataloader = create_backtest_dataloader(
-        config=config,
-        freq=freq,
-        data=gluonts_test_dataset,
-        batch_size=64,
-    )
-    
-    # Generate forecasts
-    print("Generating forecasts...")
-    forecasts = generate_forecasts(model, test_dataloader, config, device)
-    print(f"Generated forecasts shape: {forecasts.shape}")
-    
-    # Calculate metrics
-    print("Calculating evaluation metrics...")
-    mase_metrics, smape_metrics, mape_metrics = calculate_metrics(forecasts, test_dataset, prediction_length, freq)
-    print(f"MASE: {np.mean(mase_metrics):.4f}")
-    print(f"sMAPE: {np.mean(smape_metrics):.4f}")
-    print(f"MAPE: {np.mean(mape_metrics):.4f}%")
-    
-    # Visualize results
-    plot_metrics_relationship(mase_metrics, smape_metrics, "MASE", "sMAPE")
-    plot_metrics_relationship(mase_metrics, mape_metrics, "MASE", "MAPE")
-    
-    # Plot forecasts for selected companies
-    target_companies = {"Apple", "Microsoft", "NVIDIA", "Tencent", "ICBC", "Alibaba"}
-    print(f"Plotting forecasts for selected companies: {', '.join(target_companies)}")
-    plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, target_companies)
+# Load model and configuration
+model_dir = "models/marketcap_model_1000"
+model_path = os.path.join(model_dir, "time_series_model.pth")
+config_path = os.path.join(model_dir, "config")
 
+# Load configuration and metadata
+config = TimeSeriesTransformerConfig.from_pretrained(config_path)
+metadata = load_metadata(config_path)
 
-if __name__ == "__main__":
-    main()
+freq = metadata["freq"]
+prediction_length = int(metadata["prediction_length"])
+
+print(f"Model configuration loaded from {config_path}")
+print(f"Frequency: {freq}")
+print(f"Prediction length: {prediction_length}")
+
+# Initialize and load model
+model = TimeSeriesTransformerForPrediction(config)
+model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+
+# Set device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
+print(f"Using device: {device}")
+
+# Load test dataset
+data_dir = "prepared_marketcap_dataset"
+dataset = load_from_disk(f"{data_dir}/dataset")
+test_dataset = dataset["test"]
+
+print(f"Test dataset loaded: {len(test_dataset)} time series")
+
+# Convert to GluonTS format
+gluonts_test_dataset = convert_to_gluonts_dataset(test_dataset, freq)
+
+# Create dataloader
+test_dataloader = create_backtest_dataloader(
+    config=config,
+    freq=freq,
+    data=gluonts_test_dataset,
+    batch_size=64,
+)
+
+# Generate forecasts
+print("Generating forecasts...")
+forecasts = generate_forecasts(model, test_dataloader, config, device)
+print(f"Generated forecasts shape: {forecasts.shape}")
+
+# Calculate metrics
+print("Calculating evaluation metrics...")
+mase_metrics, smape_metrics, mape_metrics = calculate_metrics(forecasts, test_dataset, prediction_length, freq)
+print(f"MASE: {np.mean(mase_metrics):.4f}")
+print(f"sMAPE: {np.mean(smape_metrics):.4f}")
+print(f"MAPE: {np.mean(mape_metrics):.4f}%")
+
+# Visualize results
+plot_metrics_relationship(mase_metrics, smape_metrics, "MASE", "sMAPE")
+plot_metrics_relationship(mase_metrics, mape_metrics, "MASE", "MAPE")
+
+# Plot forecasts for selected companies
+target_companies = {"Apple", "Microsoft", "NVIDIA", "Tencent", "ICBC", "Alibaba"}
+print(f"Plotting forecasts for selected companies: {', '.join(target_companies)}")
+plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, target_companies)

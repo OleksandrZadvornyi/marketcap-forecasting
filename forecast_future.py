@@ -473,60 +473,56 @@ def plot_forecast(
     plt.show()
 
 # ═════════════════════════════════════════════════════════════════
-# Main Function
+# Main Execution
 # ═════════════════════════════════════════════════════════════════
 
-def main():
-    """Run the forecasting pipeline."""
-    print(f"Running on device: {DEVICE}")
-    
-    # Load model, configuration, and metadata
-    model, config, metadata = load_model_and_config()
-    
-    # Extract key parameters from metadata
-    freq = metadata["freq"]
-    prediction_length = int(metadata["prediction_length"])
-    
-    print("Model loaded successfully.")
-    print(f"Frequency: {freq}, Prediction length: {prediction_length}")
-    
-    # Load dataset
-    dataset = load_from_disk(f"{DATA_DIR}/dataset")
-    test_dataset = dataset["test"]
-    print(f"Test dataset loaded with {len(test_dataset)} time series.")
-    
-    # Convert test dataset to GluonTS format
-    gluonts_test_dataset = convert_to_gluonts_dataset(test_dataset, freq)
-    
-    # Create test dataloader
-    test_dataloader = create_test_dataloader(
-        config=config,
-        freq=freq,
-        data=gluonts_test_dataset,
-        batch_size=64,
-    )
-    
-    # Generate forecasts
-    print("Generating forecasts...")
-    forecasts, _, _ = generate_forecasts(model, test_dataloader, DEVICE, config)
-    print(f"Generated forecasts shape: {forecasts.shape}")
-    
-    # Plot forecasts for target companies
-    found_companies = 0
-    for i, item in enumerate(test_dataset):
-        if item["item_id"] in TARGET_COMPANIES:
-            found_companies += 1
-            print(f"Plotting forecast for {item['item_id']}...")
-            plot_forecast(
-                ts_data=item["target"],
-                forecast=forecasts[i],
-                item_name=item["item_id"],
-                start_date=item["start"],
-                freq=freq,
-                prediction_length=prediction_length
-            )
-    
-    print(f"Forecasting complete. Generated plots for {found_companies} target companies.")
+"""Run the forecasting pipeline."""
+print(f"Running on device: {DEVICE}")
 
-if __name__ == "__main__":
-    main()
+# Load model, configuration, and metadata
+model, config, metadata = load_model_and_config()
+
+# Extract key parameters from metadata
+freq = metadata["freq"]
+prediction_length = int(metadata["prediction_length"])
+
+print("Model loaded successfully.")
+print(f"Frequency: {freq}, Prediction length: {prediction_length}")
+
+# Load dataset
+dataset = load_from_disk(f"{DATA_DIR}/dataset")
+test_dataset = dataset["test"]
+print(f"Test dataset loaded with {len(test_dataset)} time series.")
+
+# Convert test dataset to GluonTS format
+gluonts_test_dataset = convert_to_gluonts_dataset(test_dataset, freq)
+
+# Create test dataloader
+test_dataloader = create_test_dataloader(
+    config=config,
+    freq=freq,
+    data=gluonts_test_dataset,
+    batch_size=64,
+)
+
+# Generate forecasts
+print("Generating forecasts...")
+forecasts, _, _ = generate_forecasts(model, test_dataloader, DEVICE, config)
+print(f"Generated forecasts shape: {forecasts.shape}")
+
+# Plot forecasts for target companies
+found_companies = 0
+for i, item in enumerate(test_dataset):
+    if item["item_id"] in TARGET_COMPANIES:
+        found_companies += 1
+        print(f"Plotting forecast for {item['item_id']}...")
+        plot_forecast(
+            ts_data=item["target"],
+            forecast=forecasts[i],
+            item_name=item["item_id"],
+            start_date=item["start"],
+            freq=freq,
+            prediction_length=prediction_length
+        )
+
+print(f"Forecasting complete. Generated plots for {found_companies} target companies.")

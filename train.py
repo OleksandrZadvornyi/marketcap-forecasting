@@ -324,109 +324,104 @@ def visualize_data(train_example, validation_example, test_example):
 
 # ===== Main Execution =====
 
-def main():
-    # Load datasets
-    data_dir = "prepared_marketcap_dataset"
-    dataset = load_from_disk(f"{data_dir}/dataset")
-    
-    print(f"Train dataset: {len(dataset['train'])} time series")
-    print(f"Validation dataset: {len(dataset['validation'])} time series")
-    print(f"Test dataset: {len(dataset['test'])} time series")
-    
-    # Get examples from each split
-    train_example = dataset["train"][0]
-    validation_example = dataset["validation"][0]
-    test_example = dataset["test"][0]
-    
-    # Load metadata
-    metadata = load_metadata(data_dir)
-    freq = metadata["freq"]
-    prediction_length = int(metadata["prediction_length"])
-    
-    # Verify dataset structure
-    assert len(train_example["target"]) + prediction_length == len(validation_example["target"]), \
-        "Validation example length doesn't match expected length"
-    
-    # Visualize data
-    visualize_data(train_example, validation_example, test_example)
-    
-    # Set up datasets
-    train_dataset = dataset["train"]
-    test_dataset = dataset["test"]
-    
-    # Apply transformations
-    train_dataset.set_transform(partial(transform_start_field, freq=freq))
-    test_dataset.set_transform(partial(transform_start_field, freq=freq))
-    
-    # Get time features and lags
-    lags_sequence = get_lags_for_frequency(freq)
-    time_features = time_features_from_frequency_str(freq)
-    
-    print(f"Lags sequence: {lags_sequence}")
-    print(f"Time features: {time_features}")
-    
-    # Configure model
-    config = TimeSeriesTransformerConfig(
-        prediction_length=prediction_length,
-        context_length=prediction_length * 2,
-        lags_sequence=lags_sequence,
-        num_time_features=len(time_features) + 1,  # Add 1 for age feature
-        num_static_categorical_features=3,
-        cardinality = [
-            int(metadata["cardinality_sector"]),
-            int(metadata["cardinality_industry"]),
-            int(metadata["cardinality_mcap"]),
-        ],
-        embedding_dimension=[4, 6, 3],   # Dimension of categorical embedding
-        
-        # transformer params:
-        encoder_layers=4,
-        decoder_layers=4,
-        d_model=32,
-    )
-    
-    model = TimeSeriesTransformerForPrediction(config)
-    print(f"Distribution output: {model.config.distribution_output}")
-    
-    # Create dataloaders
-    train_dataloader = create_train_dataloader(
-        config=config,
-        freq=freq,
-        data=train_dataset,
-        batch_size=256,
-        num_batches_per_epoch=100,
-    )
-    
-    # Check batch shape
-    batch = next(iter(train_dataloader))
-    print("\nBatch shapes:")
-    for k, v in batch.items():
-        print(f"{k}: {v.shape}, {v.type()}")
-    
-    # Initialize accelerator and optimizer
-    global accelerator  # Make accelerator accessible to train_model function
-    accelerator = Accelerator()
-    device = accelerator.device
-    
-    model.to(device)
-    optimizer = AdamW(model.parameters(), lr=6e-4, betas=(0.9, 0.95), weight_decay=1e-1)
-    
-    model, optimizer, train_dataloader = accelerator.prepare(
-        model, optimizer, train_dataloader
-    )
-    
-    # Train the model
-    train_model(model, optimizer, train_dataloader, config, device, num_epochs=40)
-    
-    # Save the model
-    unwrapped_model = accelerator.unwrap_model(model)
-    model_path = "models/marketcap_model_1000"
-    config_path = "models/marketcap_model_1000/config"
-    save_model(unwrapped_model, model_path, config_path, freq, prediction_length, lags_sequence)
-    
-    print(f"Model saved to {model_path}")
-    print(f"Configuration saved to {config_path}")
+# Load datasets
+data_dir = "prepared_marketcap_dataset"
+dataset = load_from_disk(f"{data_dir}/dataset")
 
+print(f"Train dataset: {len(dataset['train'])} time series")
+print(f"Validation dataset: {len(dataset['validation'])} time series")
+print(f"Test dataset: {len(dataset['test'])} time series")
 
-if __name__ == "__main__":
-    main()
+# Get examples from each split
+train_example = dataset["train"][0]
+validation_example = dataset["validation"][0]
+test_example = dataset["test"][0]
+
+# Load metadata
+metadata = load_metadata(data_dir)
+freq = metadata["freq"]
+prediction_length = int(metadata["prediction_length"])
+
+# Verify dataset structure
+assert len(train_example["target"]) + prediction_length == len(validation_example["target"]), \
+    "Validation example length doesn't match expected length"
+
+# Visualize data
+visualize_data(train_example, validation_example, test_example)
+
+# Set up datasets
+train_dataset = dataset["train"]
+test_dataset = dataset["test"]
+
+# Apply transformations
+train_dataset.set_transform(partial(transform_start_field, freq=freq))
+test_dataset.set_transform(partial(transform_start_field, freq=freq))
+
+# Get time features and lags
+lags_sequence = get_lags_for_frequency(freq)
+time_features = time_features_from_frequency_str(freq)
+
+print(f"Lags sequence: {lags_sequence}")
+print(f"Time features: {time_features}")
+
+# Configure model
+config = TimeSeriesTransformerConfig(
+    prediction_length=prediction_length,
+    context_length=prediction_length * 2,
+    lags_sequence=lags_sequence,
+    num_time_features=len(time_features) + 1,  # Add 1 for age feature
+    num_static_categorical_features=3,
+    cardinality = [
+        int(metadata["cardinality_sector"]),
+        int(metadata["cardinality_industry"]),
+        int(metadata["cardinality_mcap"]),
+    ],
+    embedding_dimension=[4, 6, 3],   # Dimension of categorical embedding
+    
+    # transformer params:
+    encoder_layers=4,
+    decoder_layers=4,
+    d_model=32,
+)
+
+model = TimeSeriesTransformerForPrediction(config)
+print(f"Distribution output: {model.config.distribution_output}")
+
+# Create dataloaders
+train_dataloader = create_train_dataloader(
+    config=config,
+    freq=freq,
+    data=train_dataset,
+    batch_size=256,
+    num_batches_per_epoch=100,
+)
+
+# Check batch shape
+batch = next(iter(train_dataloader))
+print("\nBatch shapes:")
+for k, v in batch.items():
+    print(f"{k}: {v.shape}, {v.type()}")
+
+# Initialize accelerator and optimizer
+global accelerator  # Make accelerator accessible to train_model function
+accelerator = Accelerator()
+device = accelerator.device
+
+model.to(device)
+optimizer = AdamW(model.parameters(), lr=6e-4, betas=(0.9, 0.95), weight_decay=1e-1)
+
+model, optimizer, train_dataloader = accelerator.prepare(
+    model, optimizer, train_dataloader
+)
+
+# Train the model
+train_model(model, optimizer, train_dataloader, config, device, num_epochs=40)
+
+# Save the model
+unwrapped_model = accelerator.unwrap_model(model)
+model_path = "models/marketcap_model_1000"
+config_path = "models/marketcap_model_1000/config"
+save_model(unwrapped_model, model_path, config_path, freq, prediction_length, lags_sequence)
+
+print(f"Model saved to {model_path}")
+print(f"Configuration saved to {config_path}")
