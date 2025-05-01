@@ -58,9 +58,7 @@ def convert_to_gluonts_dataset(hf_dataset, freq: str) -> ListDataset:
         data.append({
             FieldName.START: pd.Period(item["start"], freq=freq),
             FieldName.TARGET: item["target"],
-            FieldName.FEAT_STATIC_CAT: [item["feat_static_cat"][0]],
-            # Uncomment if needed:
-            # FieldName.FEAT_STATIC_REAL: item["feat_static_real"],
+            FieldName.FEAT_STATIC_CAT: item["feat_static_cat"],
             FieldName.ITEM_ID: item["item_id"]
         })
     return ListDataset(data, freq=freq)
@@ -365,7 +363,7 @@ def plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, ta
 
 def main():
     # Load model and configuration
-    model_dir = "models/marketcap_model_1000"
+    model_dir = "models/marketcap_model_1000_with_features"
     model_path = os.path.join(model_dir, "time_series_model.pth")
     config_path = os.path.join(model_dir, "config")
     
@@ -390,7 +388,7 @@ def main():
     print(f"Using device: {device}")
     
     # Load test dataset
-    data_dir = "prepared_marketcap_dataset"
+    data_dir = "prepared_marketcap_dataset_with_features"
     dataset = load_from_disk(f"{data_dir}/dataset")
     test_dataset = dataset["test"]
     

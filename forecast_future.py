@@ -39,8 +39,8 @@ from gluonts.time_feature import time_features_from_frequency_str
 # ═════════════════════════════════════════════════════════════════
 
 # System paths and constants
-MODEL_DIR = "models/marketcap_model_1000"  # Update with your model directory
-DATA_DIR = "prepared_marketcap_dataset"
+MODEL_DIR = "models/marketcap_model_1000_with_features"  # Update with your model directory
+DATA_DIR = "prepared_marketcap_dataset_with_features"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Target companies for visualization
@@ -236,7 +236,7 @@ def convert_to_gluonts_dataset(hf_dataset, freq: str) -> ListDataset:
         data.append({
             FieldName.START: pd.Period(item["start"], freq=freq),
             FieldName.TARGET: item["target"],
-            FieldName.FEAT_STATIC_CAT: [item["feat_static_cat"][0]],
+            FieldName.FEAT_STATIC_CAT: item["feat_static_cat"],
             FieldName.ITEM_ID: item["item_id"]
         })
     return ListDataset(data, freq=freq)

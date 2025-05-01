@@ -326,7 +326,7 @@ def visualize_data(train_example, validation_example, test_example):
 
 def main():
     # Load datasets
-    data_dir = "prepared_marketcap_dataset"
+    data_dir = "prepared_marketcap_dataset_with_features"
     dataset = load_from_disk(f"{data_dir}/dataset")
     
     print(f"Train dataset: {len(dataset['train'])} time series")
@@ -371,9 +371,15 @@ def main():
         context_length=prediction_length * 2,
         lags_sequence=lags_sequence,
         num_time_features=len(time_features) + 1,  # Add 1 for age feature
-        num_static_categorical_features=1,
-        cardinality=[len(train_dataset)],  # Number of unique time series
-        embedding_dimension=[2],  # Dimension of categorical embedding
+        num_static_categorical_features=3,
+        cardinality = [
+            int(metadata["cardinality_sector"]),
+            int(metadata["cardinality_industry"]),
+            int(metadata["cardinality_mcap"]),
+        ],
+        embedding_dimension=[4, 6, 3],   # Dimension of categorical embedding
+        
+        # transformer params:
         encoder_layers=4,
         decoder_layers=4,
         d_model=32,
@@ -414,8 +420,8 @@ def main():
     
     # Save the model
     unwrapped_model = accelerator.unwrap_model(model)
-    model_path = "models/marketcap_model_1000"
-    config_path = "models/marketcap_model_1000/config"
+    model_path = "models/marketcap_model_1000_with_features"
+    config_path = "models/marketcap_model_1000_with_features/config"
     save_model(unwrapped_model, model_path, config_path, freq, prediction_length, lags_sequence)
     
     print(f"Model saved to {model_path}")
