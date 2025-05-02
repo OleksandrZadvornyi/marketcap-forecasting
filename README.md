@@ -18,7 +18,7 @@ marketcap-forecasting/
 │   ├── fetch_data.py            # Fetches market cap data from Yahoo Finance
 │   ├── prepare_dataset.py       # Processes raw data into time series format
 │   └── check_for_nan.py         # Validates data quality
-├── models/
+├── forecasting/
 │   ├── train.py                 # Trains the TimeSeriesTransformer model
 │   ├── test_model.py            # Evaluates the trained model
 │   ├── forecast_future.py       # Generates future forecasts
@@ -28,7 +28,8 @@ marketcap-forecasting/
 │   └── plot_marketcap_data.py   # Visualizes market cap trends
 ├── market_cap_data/             # Directory for raw market cap data
 ├── prepared_marketcap_dataset/  # Processed dataset directory
-└── models/                      # Saved model directory
+├── saved_models/                # Saved models directory
+└── saved_forecasts/             # Saved forecasting results
 ```
 
 ## Key Features
@@ -105,7 +106,7 @@ marketcap-forecasting/
 ## Results
 
 Example forecast for Apple Inc.:
-![Apple Forecast Example](forecasts/transformers_forecasts/Apple_forecast.png)
+![Apple Forecast Example](saved_forecasts/transformers_forecasts/Apple_forecast.png)
 
 ## License
 
