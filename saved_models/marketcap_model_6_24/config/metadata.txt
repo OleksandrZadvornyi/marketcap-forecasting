@@ -1,4 +1,0 @@
-freq=1M
-prediction_length=24
-target_column=MARKET_CAP
-lags_sequence=[1, 2, 3, 4, 5, 6, 7, 11, 12, 13, 23, 24, 25, 35, 36, 37]

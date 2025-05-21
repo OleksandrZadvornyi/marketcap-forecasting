@@ -6,7 +6,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_squared_error
 
 # Load the dataset
-data = pd.read_csv('market_cap_data/Apple_market_cap.csv')
+data = pd.read_csv('../market_cap_data/Apple_market_cap.csv')
 data['Date'] = pd.to_datetime(data['Date'])
 data.set_index('Date', inplace=True)
 

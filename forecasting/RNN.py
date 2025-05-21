@@ -43,7 +43,7 @@ def train_and_evaluate(company_name):
     print(f"\nProcessing {company_name}...")
     
     # Read data from CSV
-    csv_path = f'market_cap_data/{company_name}_market_cap.csv'
+    csv_path = f'../market_cap_data/{company_name}_market_cap.csv'
     df = pd.read_csv(csv_path)
     data = df['Market Cap (Billion USD)'].values.reshape(-1, 1)
     
