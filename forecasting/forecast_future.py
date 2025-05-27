@@ -39,8 +39,8 @@ from gluonts.time_feature import time_features_from_frequency_str
 # ═════════════════════════════════════════════════════════════════
 
 # System paths and constants
-MODEL_DIR = "models/marketcap_model_1000"  # Update with your model directory
-DATA_DIR = "prepared_marketcap_dataset"
+MODEL_DIR = "../model"  # Update with your model directory
+DATA_DIR = "../prepared_marketcap_dataset"
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Target companies for visualization
@@ -438,10 +438,40 @@ def plot_forecast(
         color='#ff7f0e'
     )
     
-    # Format x-axis dates
-    ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
-    ax.xaxis.set_minor_locator(mdates.MonthLocator())
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+    # IMPROVED X-AXIS FORMATTING - Multiple approaches:
+    
+    # Calculate total time span to choose appropriate formatting
+    total_dates = len(historical_index) + len(forecast_index)
+    date_range = (forecast_index[-1] - historical_index[0]).days
+    
+    # Adaptive date formatting based on data span
+    if date_range <= 365:  # Less than 1 year
+        # Show every 2-3 months
+        ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+        ax.xaxis.set_minor_locator(mdates.MonthLocator())
+    elif date_range <= 1095:  # 1-3 years
+        # Show every 6 months
+        ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+        ax.xaxis.set_minor_locator(mdates.MonthLocator(interval=3))
+    elif date_range <= 1825:  # 3-5 years
+        # Show yearly
+        ax.xaxis.set_major_locator(mdates.YearLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+        ax.xaxis.set_minor_locator(mdates.MonthLocator(bymonth=(1, 7)))
+    else:  # More than 5 years
+        # Show every 2 years
+        ax.xaxis.set_major_locator(mdates.YearLocator(base=2))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
+        ax.xaxis.set_minor_locator(mdates.YearLocator())
+    
+    # Alternative: Limit maximum number of ticks
+    # ax.xaxis.set_major_locator(mdates.MaxNLocator(nbins=8))
+    # ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
+    
+    # Rotate labels and improve spacing
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha='right')
     
     # Add title and labels
     plt.title(f'Market Cap Forecast: {item_name}', fontsize=16, pad=20)
@@ -457,18 +487,16 @@ def plot_forecast(
     ax.grid(True, linestyle='--', alpha=0.6)
     plt.legend(loc='upper left', fontsize=12)
     
-    # Rotate date labels for better readability
-    plt.gcf().autofmt_xdate()
+    # Automatic date formatting for better readability
+    fig.autofmt_xdate()
     
-    # Add watermark
-    fig.text(0.99, 0.01, 'Generated with TimeSeriesTransformer', 
-             fontsize=8, color='gray', ha='right', alpha=0.7)
-    
+    # Adjust layout to prevent label cutoff
     plt.tight_layout()
     
     # Save the plot
-    os.makedirs('forecasts/transformers_forecasts', exist_ok=True)
-    plt.savefig(f'forecasts/transformers_forecasts/{item_name}_forecast.png', dpi=300, bbox_inches='tight')
+    #os.makedirs('forecasts/transformers_forecasts', exist_ok=True)
+    #plt.savefig(f'forecasts/transformers_forecasts/{item_name}_forecast.png', 
+    #            dpi=300, bbox_inches='tight', facecolor='white')
     
     plt.show()
 

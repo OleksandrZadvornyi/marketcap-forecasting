@@ -362,7 +362,7 @@ def plot_selected_forecasts(test_dataset, forecasts, prediction_length, freq, ta
 # ===== Main Execution =====
 
 # Load model and configuration
-model_dir = "models/marketcap_model_1000"
+model_dir = "../model"
 model_path = os.path.join(model_dir, "time_series_model.pth")
 config_path = os.path.join(model_dir, "config")
 
@@ -387,7 +387,7 @@ model.to(device)
 print(f"Using device: {device}")
 
 # Load test dataset
-data_dir = "prepared_marketcap_dataset"
+data_dir = "../prepared_marketcap_dataset"
 dataset = load_from_disk(f"{data_dir}/dataset")
 test_dataset = dataset["test"]
 
